@@ -71,9 +71,9 @@ while True:
         #print('Mayor Llave: ' + str(controller.maxKey(catalog)))
     
     elif int(inputs[0]) == 3:
-        cuidad = input("Ingrese una ciudad: ")
-        print('Altura del arbol: ' + str(controller.ciudadHeight(catalog)))
-        print('Elementos en el arbol: ' + str(controller.ciudadSize(catalog)))
+        ciudad = input("Ingrese una ciudad: ")
+        print('Altura del arbol: ' + str(controller.ciudadHeight(catalog,ciudad)))
+        print('Elementos en el arbol: ' + str(controller.ciudadSize(catalog,ciudad)))
 
     else:
         sys.exit(0)
