@@ -36,9 +36,17 @@ operación solicitada
 
 def printMenu():
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("1- Crear el catálogo")
+    print("2- Cargar información en el catálogo")
+    print("3- Contar los avistamientos de una ciudad")
+    print("4- Contar los avistamientos por duración")
+    print("5- Contar los avistamientos por hora/minutos del día")
+    print("6- Contar los avistamientos en un rango de fechas")
+    print("7- Contar los avistamientos de una zona geográfica")
+    print("0- Salir")
 
+
+file = 'UFOS-utf8-small.csv'
 catalog = None
 
 """
@@ -47,11 +55,25 @@ Menu principal
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
+
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
+        print("\nInicializando....")
+        # catalog es el controlador que se usará de acá en adelante
+        catalog = controller.init()
 
     elif int(inputs[0]) == 2:
-        pass
+        print("\nCargando información de UFOS ....")
+        controller.loadData(catalog, file)
+        #print('Crimenes cargados: ' + str(controller.crimesSize(catalog)))
+        #print('Altura del arbol: ' + str(controller.indexHeight(catalog)))
+        #print('Elementos en el arbol: ' + str(controller.indexSize(catalog)))
+        #print('Menor Llave: ' + str(controller.minKey(catalog)))
+        #print('Mayor Llave: ' + str(controller.maxKey(catalog)))
+    
+    elif int(inputs[0]) == 2:
+        cuidad = input("Ingrese una ciudad: ")
+        print('Altura del arbol: ' + str(controller.ciudadHeight(catalog)))
+        print('Elementos en el arbol: ' + str(controller.ciudadSize(catalog)))
 
     else:
         sys.exit(0)
