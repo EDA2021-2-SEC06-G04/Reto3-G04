@@ -55,7 +55,7 @@ def newCatalog():
 
     catalog['encuentros'] = lt.newList('SINGLE_LINKED')
     catalog['ciudad'] = mp.newMap(maptype='PROBING',
-                                      comparefunction=comparedatetime)
+                                    )
     return catalog
 
 # Funciones para agregar informacion al catalogo
