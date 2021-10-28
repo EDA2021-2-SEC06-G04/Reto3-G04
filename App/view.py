@@ -70,7 +70,7 @@ while True:
         #print('Menor Llave: ' + str(controller.minKey(catalog)))
         #print('Mayor Llave: ' + str(controller.maxKey(catalog)))
     
-    elif int(inputs[0]) == 2:
+    elif int(inputs[0]) == 3:
         cuidad = input("Ingrese una ciudad: ")
         print('Altura del arbol: ' + str(controller.ciudadHeight(catalog)))
         print('Elementos en el arbol: ' + str(controller.ciudadSize(catalog)))
