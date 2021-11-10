@@ -24,6 +24,9 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import map as mp
+from DISClib.ADT import orderedmap as om
+from DISClib.DataStructures import mapentry as me
 assert cf
 
 
@@ -64,17 +67,55 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de UFOS ....")
         controller.loadData(catalog, file)
-        #print('Crimenes cargados: ' + str(controller.crimesSize(catalog)))
-        #print('Altura del arbol: ' + str(controller.indexHeight(catalog)))
-        #print('Elementos en el arbol: ' + str(controller.indexSize(catalog)))
-        #print('Menor Llave: ' + str(controller.minKey(catalog)))
-        #print('Mayor Llave: ' + str(controller.maxKey(catalog)))
+        print('El total de avistamientos es: ' + str(lt.size(catalog['encuentros'])))
+        print('Los 5 primeros avistamientos cargados son:')
+        i = 1
+        while i <= 5:
+            print(lt.getElement(catalog['encuentros'],i))
+            i += 1
+        print('Los 5 ultimos avistamientos cargados son:')
+        i = 0
+        while i <= 4:
+            print(lt.getElement(catalog['encuentros'],lt.size(catalog['encuentros']) - i))
+            i += 1
     
     elif int(inputs[0]) == 3:
         ciudad = input("Ingrese una ciudad: ")
-        print('Altura del arbol: ' + str(controller.ciudadHeight(catalog,ciudad)))
-        print('Elementos en el arbol: ' + str(controller.ciudadSize(catalog,ciudad)))
+        print('\nHay ' + str(mp.size(catalog['ciudad'])) + ' ciudades donde se reportaron avistamientos.\n')
+        ciudadmayor = controller.ciudadmayor(catalog)
+        encuentrosciudadmayor = om.size(me.getValue(mp.get(catalog['ciudad'],ciudadmayor)))
+        print('La ciudad con mas avistamientos fue ' + ciudadmayor + ' con ' + str(encuentrosciudadmayor) + ' avistamientos.\n')
+        avistamientos = me.getValue(mp.get(catalog['ciudad'],ciudad))
+        print('Los primeros 3 avistamientos en la ciudad de ' + ciudad + ' son:\n')
+        i = 0
+        while i <= 2:
+            print('Datetime: ' + om.get(avistamientos,(om.select(avistamientos,i)))['value']['datetime'] + '    Ciudad: ' + om.get(avistamientos,(om.select(avistamientos,i)))['value']['city'] + '    País: ' + om.get(avistamientos,(om.select(avistamientos,i)))['value']['country'] + '     Forma: ' + om.get(avistamientos,(om.select(avistamientos,i)))['value']['shape'] + '    Duración: ' + om.get(avistamientos,(om.select(avistamientos,i)))['value']['duration (seconds)'] + '\n\n')
+            i += 1
+        print('Los últimos 3 avistamientos registrados en la ciudad de ' + ciudad + ' son:\n')
+        i = 3
+        while i >= 1:
+            print('Datetime: ' + om.get(avistamientos,(om.select(avistamientos,om.size(avistamientos) - i)))['value']['datetime'] + '    Ciudad: ' + om.get(avistamientos,(om.select(avistamientos,om.size(avistamientos) - i)))['value']['city'] + '    País: ' + om.get(avistamientos,(om.select(avistamientos,om.size(avistamientos) - i)))['value']['country'] + '     Forma: ' + om.get(avistamientos,(om.select(avistamientos,om.size(avistamientos) - i)))['value']['shape'] + '    Duración: ' + om.get(avistamientos,(om.select(avistamientos,om.size(avistamientos) - i)))['value']['duration (seconds)'] + '\n\n')
+            i -= 1
 
+    elif int(inputs[0]) == 4:
+        lim_inferior = input('Ingrese el limite inferior en segundos: ')
+        lim_superior = input('Ingrese el limite superior en segundos: ')
+        mayorduracion = om.maxKey(catalog['duracion'])
+        print('Los avistamientos mas largos fueron de ' + str(mayorduracion) + ' segundos, y fueron ' + str(om.size(me.getValue(om.get(catalog['duracion'],mayorduracion)))) + ' en total.')
+        avistamientos = controller.rangosegundos(catalog,lim_inferior,lim_superior)
+        print('Hay ' + str(lt.size(avistamientos)) + ' avistamientos en el rango de tiempo.')
+        print('Los primeros 3 avistamientos en el rango son:\n')
+        i = 1
+        #print(avistamientos)
+        while i <= 3:
+            print('Datetime: ' + lt.getElement(avistamientos,i)['datetime'] + '    Ciudad: ' + lt.getElement(avistamientos,i)['city'] + '    País: ' + lt.getElement(avistamientos,i)['country'] + '     Forma: ' + lt.getElement(avistamientos,i)['shape'] + '    Duración: ' + lt.getElement(avistamientos,i)['duration (seconds)'] + '\n\n')
+            i += 1
+        print('Los últimos 3 avistamientos en el rango son:\n')
+        i = 2
+        while i >= 0:
+            print('Datetime: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['datetime'] + '    Ciudad: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['city'] + '    País: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['country'] + '     Forma: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['shape'] + '    Duración: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['duration (seconds)'] + '\n\n')
+            i -= 1
+       
     else:
         sys.exit(0)
 sys.exit(0)

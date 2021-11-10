@@ -30,6 +30,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as mp
+from DISClib.Algorithms.Sorting import mergesort
 import datetime
 assert config
 
@@ -43,19 +44,24 @@ los mismos.
 def newCatalog():
     """ Inicializa el analizador
 
-    Crea una lista vacia para guardar todos los crimenes
+    Crea una lista vacia para guardar todos los avistamientos
     Se crean indices (Maps) por los siguientes criterios:
     -Fechas
 
     Retorna el analizador inicializado.
     """
     catalog = {'encuentros': None,
-                'datetime': None
+                'datetime': None,
+                'ciudad': None,
+                'duracion': None
+
                 }
 
     catalog['encuentros'] = lt.newList('SINGLE_LINKED')
-    catalog['ciudad'] = mp.newMap(maptype='PROBING',
-                                    )
+    catalog['ciudad'] = mp.newMap(maptype='PROBING')
+    catalog['duracion'] = om.newMap(omaptype='RBT')
+
+                                    
     return catalog
 
 # Funciones para agregar informacion al catalogo
@@ -70,11 +76,42 @@ def addEncuentro(catalog, encuentro):
     #print(catalog['ciudad'])
     #print(encuentro['city'])
     om.put(me.getValue(mp.get(catalog['ciudad'],encuentro['city'])),encuentro['datetime'],encuentro)
+    if not om.contains(catalog['duracion'],float(encuentro['duration (seconds)'])):
+        #om.put(catalog['duracion'],float(encuentro['duration (seconds)']),lt.newList(datastructure='ARRAY_LIST',cmpfunction=cmppaisciudad))
+        om.put(catalog['duracion'],float(encuentro['duration (seconds)']),om.newMap(omaptype='BRT',comparefunction=cmppaisciudad))
+    if not om.contains(me.getValue(om.get(catalog['duracion'],float(encuentro['duration (seconds)']))),encuentro['country'] + '-' + encuentro['city']):
+        #om.put(catalog['duracion'],float(encuentro['duration (seconds)']),lt.newList(datastructure='ARRAY_LIST',cmpfunction=cmppaisciudad))
+        om.put(me.getValue(om.get(catalog['duracion'],float(encuentro['duration (seconds)']))), encuentro['country'] + '-' + encuentro['city'],lt.newList('ARRAY_LIST'))
+    lt.addLast(me.getValue(om.get(me.getValue(om.get(catalog['duracion'],float(encuentro['duration (seconds)']))),encuentro['country'] + '-' + encuentro['city'])),encuentro)
+
     return catalog
 
 # Funciones para creacion de datos
 
 # Funciones de consulta
+#Requerimiento 1
+def ciudadmayor(catalog):
+    mayor = None
+    #print(mp.keySet(catalog['ciudad']))
+    for ciudad in lt.iterator(mp.keySet(catalog['ciudad'])):
+        if (mayor == None) or ((om.size(me.getValue(mp.get(catalog['ciudad'],ciudad)))) > (om.size(me.getValue(mp.get(catalog['ciudad'],mayor))))):
+            mayor = ciudad
+    return mayor
+
+#Requerimiento 2
+def rangosegundos(catalog,min,max):
+    lista = lt.newList('ARRAY_LIST')
+    i = min
+    while i <= max:
+        arbol = me.getValue(om.get(catalog['duracion'],i))
+        llaveselementos = lt.iterator(om.keySet(arbol))
+        for elemento in llaveselementos:
+            #print(om.get(arbol,elemento))
+            encuentros = lt.iterator(me.getValue(om.get(arbol,elemento)))
+            for encuentro in encuentros:
+                lt.addLast(lista,encuentro)
+        i = om.ceiling(catalog['duracion'],i + 0.1)
+    return lista
 
 def ciudadHeight(catalog,ciudad):
     """
@@ -102,6 +139,26 @@ def comparedatetime(date1, date2):
     else:
         return -1
 
+def cmppaisciudad(encuentro1,encuentro2):
+    """
+    Compara dos combinaciones país-ciudad en orden alfabético
+    """
+    encuentro1 = encuentro1.split('-')
+    encuentro2 = encuentro2.split('-')
+
+    if (encuentro1[1] == encuentro2[1]):
+        if (encuentro1[0] == encuentro2[0]):
+            return 0
+        if (encuentro1[0] > encuentro2[0]):
+            return 1
+        else:
+            return -1
+    elif (encuentro1[1] > encuentro2[1]):
+        return 1
+    else:
+        return -1
+
 # Funciones de ordenamiento
+
 
 

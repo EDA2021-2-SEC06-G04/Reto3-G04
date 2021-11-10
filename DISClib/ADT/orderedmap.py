@@ -238,6 +238,20 @@ def ceiling(map, key):
     """
     return om.ceiling(map, key)
 
+def ceilingup(map, key):
+    """
+    Retorna la llave mas pequeña en la tabla de simbolos,
+    mayor o igual a la llave key
+    Args:
+        map: La tabla de simbolos
+        key: la llave de búsqueda
+    Returns:
+        La llave más pequeña mayor o igual a Key
+    Raises:
+        Exception
+    """
+    return om.ceilingup(map, key)
+
 
 def select(map, k):
     """

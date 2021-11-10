@@ -54,7 +54,16 @@ def loadData(catalog, file):
 
 # Funciones de ordenamiento
 
+
 # Funciones de consulta sobre el catálogo
+
+def ciudadmayor(catalog):
+    "Retorna el nombre de la ciudad con mayor numero de encuentros"
+    return model.ciudadmayor(catalog)
+
+def rangosegundos(catalog,min,max):
+    "Retorna una lista con todos los elementos con duraciones en segundos entre los máximo y mínimo dados"
+    return model.rangosegundos(catalog,float(min),float(max))
 
 def ciudadHeight(catalog,ciudad):
     """
