@@ -56,10 +56,18 @@ def newCatalog():
                 'duracion': None
 
                 }
-
+    """Lista con todos los encuentros en el orden que se lee el archivo"""
     catalog['encuentros'] = lt.newList('SINGLE_LINKED')
+
+    """Mapa que tiene por llaves las ciudades donde hubo avistamientos y como valores listas con los avistamietnos en esa ciudad"""
     catalog['ciudad'] = mp.newMap(maptype='PROBING')
+    
+    """Mapa ordenado que tiene por llaves la duración en segundos de un encuentro y como valores árboles ordenados que tienen por llaves las combinaciones
+    ciudad-país, ordenadas alfabéticamente y como valores una lista con los avistamientos que teuvieron la duración del primer índice en la ciudad y país del segundo índice"""
     catalog['duracion'] = om.newMap(omaptype='RBT')
+
+    """Mapa ordenado que tiene por llaves las fechas en formato AAAAMMDD y como valores listas con los avistameintos de esa fecha específica"""
+    catalog['datetime'] = om.newMap(omaptype='RBT')
 
                                     
     return catalog
@@ -71,11 +79,13 @@ def addEncuentro(catalog, encuentro):
     y actualiza los índices dal catálogo con el nuevo reporte
     """
     lt.addLast(catalog['encuentros'], encuentro)
+
     if not mp.contains(catalog['ciudad'],encuentro['city']):
         mp.put(catalog['ciudad'],encuentro['city'],om.newMap())
     #print(catalog['ciudad'])
     #print(encuentro['city'])
     om.put(me.getValue(mp.get(catalog['ciudad'],encuentro['city'])),encuentro['datetime'],encuentro)
+
     if not om.contains(catalog['duracion'],float(encuentro['duration (seconds)'])):
         #om.put(catalog['duracion'],float(encuentro['duration (seconds)']),lt.newList(datastructure='ARRAY_LIST',cmpfunction=cmppaisciudad))
         om.put(catalog['duracion'],float(encuentro['duration (seconds)']),om.newMap(omaptype='BRT',comparefunction=cmppaisciudad))
@@ -83,7 +93,13 @@ def addEncuentro(catalog, encuentro):
         #om.put(catalog['duracion'],float(encuentro['duration (seconds)']),lt.newList(datastructure='ARRAY_LIST',cmpfunction=cmppaisciudad))
         om.put(me.getValue(om.get(catalog['duracion'],float(encuentro['duration (seconds)']))), encuentro['country'] + '-' + encuentro['city'],lt.newList('ARRAY_LIST'))
     lt.addLast(me.getValue(om.get(me.getValue(om.get(catalog['duracion'],float(encuentro['duration (seconds)']))),encuentro['country'] + '-' + encuentro['city'])),encuentro)
-
+    
+    fecha = ((encuentro['datetime']).split(' '))[0]
+    fecha = int(fecha.replace('-',''))
+    if not om.contains(catalog['datetime'],fecha):
+        om.put(catalog['datetime'],fecha,lt.newList('ARRAY_LIST'))
+    lt.addLast(me.getValue(om.get(catalog['datetime'],fecha)),encuentro)
+    
     return catalog
 
 # Funciones para creacion de datos
@@ -111,6 +127,18 @@ def rangosegundos(catalog,min,max):
             for encuentro in encuentros:
                 lt.addLast(lista,encuentro)
         i = om.ceiling(catalog['duracion'],i + 0.1)
+    return lista
+
+#Requerimiento 4
+def rangofechas(catalog,min,max):
+    lista = lt.newList('ARRAY_LIST')
+    max = int(max.replace('-',''))
+    i = int(min.replace('-',''))
+    while i <= max:
+        encuentros = lt.iterator(me.getValue(om.get(catalog['datetime'],om.ceiling(catalog['datetime'],i))))
+        for encuentro in encuentros:
+            lt.addLast(lista,encuentro)
+        i = om.ceiling(catalog['datetime'],om.ceiling(catalog['datetime'],i) + 1)
     return lista
 
 def ciudadHeight(catalog,ciudad):

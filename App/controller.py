@@ -65,6 +65,10 @@ def rangosegundos(catalog,min,max):
     "Retorna una lista con todos los elementos con duraciones en segundos entre los máximo y mínimo dados"
     return model.rangosegundos(catalog,float(min),float(max))
 
+def rangofechas(catalog,min,max):
+    "Retorna una lista con todos los encuentros sucedidos entre las dos fechas que entran por parámetro"
+    return model.rangofechas(catalog,min,max)
+
 def ciudadHeight(catalog,ciudad):
     """
     Altura del indice (arbol)

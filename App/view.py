@@ -43,9 +43,8 @@ def printMenu():
     print("2- Cargar información en el catálogo")
     print("3- Contar los avistamientos de una ciudad")
     print("4- Contar los avistamientos por duración")
-    print("5- Contar los avistamientos por hora/minutos del día")
-    print("6- Contar los avistamientos en un rango de fechas")
-    print("7- Contar los avistamientos de una zona geográfica")
+    print("5- Contar los avistamientos en un rango de fechas")
+    print("6- Contar los avistamientos de una zona geográfica")
     print("0- Salir")
 
 
@@ -114,6 +113,23 @@ while True:
         i = 2
         while i >= 0:
             print('Datetime: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['datetime'] + '    Ciudad: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['city'] + '    País: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['country'] + '     Forma: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['shape'] + '    Duración: ' + lt.getElement(avistamientos,lt.size(avistamientos) - i)['duration (seconds)'] + '\n\n')
+            i -= 1
+
+    elif int(inputs[0]) == 5:
+        lim_inferior = input('Ingrese la fecha límite inferior en formato AAAA-MM-DD: ')
+        lim_superior = input('Ingrese la fecha límite superior en en formato AAAA-MM-DD: ')
+        print('\nLos avistamientos mas antiguos fueron en la fecha ' + (lt.firstElement(me.getValue(om.get(catalog['datetime'],om.minKey(catalog['datetime']))))['datetime']).split(' ')[0] + ' y fueron un total de ' + str(lt.size(me.getValue(om.get(catalog['datetime'],om.minKey(catalog['datetime']))))) + '\n')
+        rango = controller.rangofechas(catalog,lim_inferior,lim_superior)
+        print('Hay ' + str(lt.size(rango)) + ' avistamientos en el rango de ' + lim_inferior + ' a ' + lim_superior + '.\n')
+        print('Los primeros 3 avistamientos en el rango son:\n')
+        i = 1
+        while i <= 3:
+            print('Datetime: ' + lt.getElement(rango,i)['datetime'] + '    Ciudad: ' + lt.getElement(rango,i)['city'] + '    País: ' + lt.getElement(rango,i)['country'] + '     Forma: ' + lt.getElement(rango,i)['shape'] + '    Duración: ' + lt.getElement(rango,i)['duration (seconds)'] + '\n\n')
+            i += 1
+        print('Los últimos 3 avistamientos registrados en el rango son:\n')
+        i = 2
+        while i >= 0:
+            print('Datetime: ' + lt.getElement(rango,lt.size(rango) - i)['datetime'] + '    Ciudad: ' + lt.getElement(rango,lt.size(rango) - i)['city'] + '    País: ' + lt.getElement(rango,lt.size(rango) - i)['country'] + '     Forma: ' + lt.getElement(rango,lt.size(rango) - i)['shape'] + '    Duración: ' + lt.getElement(rango,lt.size(rango) - i)['duration (seconds)'] + '\n\n')
             i -= 1
        
     else:
